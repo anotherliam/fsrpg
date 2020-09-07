@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>FSRPG</RootNamespace>
     <AssemblyName>FSRPG</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFSharpCoreVersion>4.4.3.0</TargetFSharpCoreVersion>
     <MonoGamePlatform>DesktopGL</MonoGamePlatform>
@@ -62,15 +62,28 @@
     <Compile Include="Map\JSONDefs.fs" />
     <Compile Include="Map\TileTerrainType.fs" />
     <Compile Include="Map\Map.fs" />
-    <Compile Include="testing.fs" />
-    <Compile Include="Resources.fs" />
     <Compile Include="Config.fs" />
+    <Compile Include="GUIRendering\NineSlice.fs" />
+    <Compile Include="testing.fs" />
+    <Compile Include="Sprite.fs" />
+    <Compile Include="ActorSprite.fs" />
+    <Compile Include="Resources.fs" />
     <Compile Include="EngineState.fs" />
+    <Compile Include="GameLogic\Actor.fs" />
+    <Compile Include="GameLogic\WorldUtils.fs" />
+    <Compile Include="WorldState\WorldState.fs" />
+    <Compile Include="WorldState\WorldStateUtils.fs" />
+    <Compile Include="Actions\GameAction.fs" />
+    <Compile Include="Reducer.fs" />
+    <Compile Include="StateManager.fs" />
+    <Compile Include="Render.fs" />
     <Compile Include="Input.fs" />
+    <Compile Include="InputEvent.fs" />
     <Compile Include="Camera.fs" />
-    <Compile Include="Actor.fs" />
     <Compile Include="UIState.fs" />
-    <Compile Include="GameState.fs" />
+    <Compile Include="Main\GameState.fs" />
+    <Compile Include="Main\Draw.fs" />
+    <Compile Include="Main\Update.fs" />
     <Compile Include="Game1.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
@@ -80,6 +93,18 @@
     <Content Include="data\maps\*.*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SharpDX.xml" />
+    <None Include="SharpDX.dll" />
+    <Content Include="SharpDX.D3DCompiler.xml" />
+    <None Include="SharpDX.D3DCompiler.dll" />
+    <None Include="mgfxc.runtimeconfig.json" />
+    <None Include="mgfxc.runtimeconfig.dev.json" />
+    <None Include="mgfxc.pdb" />
+    <None Include="mgfxc.exe" />
+    <None Include="mgfxc.dll" />
+    <None Include="mgfxc.deps.json" />
+    <None Include="libmojoshader_64.dll" />
+    <None Include="CppNet.dll" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
@@ -87,6 +112,9 @@
     </Reference>
     <Reference Include="FSharp.Data">
       <HintPath>..\packages\FSharp.Data.3.3.3\lib\net45\FSharp.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Extended">
+      <HintPath>..\packages\MonoGame.Extended.3.8.0\lib\netstandard2.0\MonoGame.Extended.dll</HintPath>
     </Reference>
     <Reference Include="MonoGame.Framework">
       <HintPath>C:\Program Files (x86)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
@@ -97,6 +125,9 @@
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

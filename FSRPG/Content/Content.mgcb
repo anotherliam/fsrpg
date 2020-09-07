@@ -13,28 +13,58 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin data/maps/Ch0.json
+/copy:data/maps/Ch0.json
+
 #begin data/maps/testmap.json
 /copy:data/maps/testmap.json
 
 #begin data/maps/testmap2.json
 /copy:data/maps/testmap2.json
 
+#begin data/tilesets/Overworld.json
+/copy:data/tilesets/Overworld.json
+
 #begin data/tilesets/OverworldTileset.json
 /copy:data/tilesets/OverworldTileset.json
 
-#begin fonts/big.spritefont
+#begin fonts/Main_md.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:fonts/big.spritefont
+/build:fonts/Main_md.spritefont
 
-#begin fonts/Main.spritefont
+#begin fonts/Main_sm.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:fonts/Main.spritefont
+/build:fonts/Main_sm.spritefont
+
+#begin sprites/Actor_Soldier.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/Actor_Soldier.png
+
+#begin sprites/Actors/Actor_Swordsman.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/Actors/Actor_Swordsman.png
 
 #begin sprites/Grid.png
 /importer:TextureImporter
@@ -71,4 +101,28 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:tiles/Overworld_Tileset.png
+
+#begin tiles/tileset_v0-0-1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:tiles/tileset_v0-0-1.png
+
+#begin ui/Window.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:ui/Window.png
 

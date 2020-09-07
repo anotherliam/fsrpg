@@ -7,30 +7,46 @@ module Resources =
     open System.IO
     open JSONDefs
     open MapHelpers
+    open Microsoft.Xna.Framework
+    open MonoGame.Extended.TextureAtlases
+    open MonoGame.Extended
+
+    let Thiccness = Thickness
 
     type TilesetTexture = Texture2D
     
-    let TILESETS = [("OverworldTileset", "OverworldTileset.json")]
-    let TILEMAPS = [("Test Map", "testmap.json"); ("Test Map 2", "testmap2.json")]
+    let TILESETS = [("Overworld", "Overworld.json")]
+    let TILEMAPS = [("Ch0", "Ch0.json");]
 
-    // Fonts
-    let mutable fontMain = Unchecked.defaultof<SpriteFont>
-    let mutable fontBig = Unchecked.defaultof<SpriteFont>
+    type FontResources =
+        {
+            Main_sm: SpriteFont;
+            Main_md: SpriteFont;
+        }
+    
+    type SpriteResources =
+        {
+            Grid: Sprite;
+            SelCursor: Sprite;
+            ActorSwordsman: Sprite;
+        }
 
-    // Sprites
-    let mutable spriteGrid = Unchecked.defaultof<Texture2D>
-    let mutable spriteSelCursor = Unchecked.defaultof<Texture2D>
+    type Resources =
+        {
+            Fonts: FontResources;
+            Sprites: SpriteResources;
+            TileSets: Map<string, (MapHelpers.Tileset * TilesetTexture)>;
+            TileMaps: Map<string, MapHelpers.Tilemap>;
+            PrimaryWindowSkin: NinePatchRegion2D;
+        }
 
-    // Maps
-    let mutable tilesets: Map<string, (MapHelpers.Tileset * TilesetTexture)> = Map.empty
-    let mutable tilemaps: Map<string, MapHelpers.Tilemap> = Map.empty
+    
+    let mutable loaded: Resources = Unchecked.defaultof<Resources>;
+        
 
     let load (content: ContentManager) =
-        do fontMain <- content.Load<SpriteFont> "fonts/main"
-        do fontBig <- content.Load<SpriteFont> "fonts/big"
-        do spriteGrid <- content.Load<Texture2D> "sprites/Grid"
-        do spriteSelCursor <- content.Load<Texture2D> "sprites/SelectionCursor"
-        do tilesets <-
+        
+        let tilesets =
             TILESETS
             |> List.map
                 (fun (name, jsonName) ->
@@ -39,8 +55,8 @@ module Resources =
                     (name, (parsed, (content.Load<Texture2D> fileName)))
                 )
             |> Map.ofList
-        ()
-        do tilemaps <-
+
+        let tilemaps =
             TILEMAPS
             |> List.map
                 (fun (name, jsonName) ->
@@ -52,9 +68,39 @@ module Resources =
                 )
             |> Map.ofList
 
-    let prepareActiveTilemap tilemapName: MapHelpers.ActiveTilemap =
-        let tmap = tilemaps.Item tilemapName
-        let tset, texture = tilesets.Item tmap.Tileset
+        let windowSkinTexture = content.Load<Texture2D> ("ui/Window")
+
+        loaded <- {
+            Fonts =
+                {
+                    Main_sm = content.Load<SpriteFont> "fonts/Main_sm";
+                    Main_md = content.Load<SpriteFont> "fonts/Main_md";
+                }
+            
+            Sprites =
+                {
+                    Grid = Sprite.create
+                        (content.Load<Texture2D> "sprites/Grid")
+                        [new Rectangle (0,0,0,0)]
+                        0.5;
+                    SelCursor = Sprite.create
+                        (content.Load<Texture2D> "sprites/SelectionCursor")
+                        [new Rectangle (0,0,0,0)]
+                        0.5
+                    ActorSwordsman = ActorSprite.create
+                        (content.Load<Texture2D> "sprites/Actors/Actor_Swordsman");
+                }
+
+            TileSets = tilesets;
+
+            TileMaps = tilemaps;
+
+            PrimaryWindowSkin = new NinePatchRegion2D (windowSkinTexture, Thiccness 6)
+        }
+
+    let prepareActiveTilemap resources tilemapName: MapHelpers.ActiveTilemap =
+        let tmap = resources.TileMaps.Item tilemapName
+        let tset, texture = resources.TileSets.Item tmap.Tileset
         let getRegionRectForSpriteID id =
             let x = id % tset.Columns
             let y = id / tset.Columns

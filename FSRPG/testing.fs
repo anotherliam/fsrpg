@@ -105,3 +105,11 @@ let runWordsTest () =
 
     do System.Diagnostics.Debug.WriteLine (generateText "so basically, am monkey %s" [state.Vars.["name"]])
     ()
+
+let something =
+    seq {
+        yield 5
+        let x = 3
+        yield 2
+    }
+    

@@ -28,3 +28,10 @@ type StateManager =
             Current = initialState;
             ActionHistory = [];
         }
+
+    member this.RestoreFrom state =
+        {
+            this with
+                ActionHistory = [];
+                Current = state;
+        }

@@ -29,6 +29,8 @@ type InputState = {
     ButtonDown: InputItem;
     ButtonLeft: InputItem;
     ButtonRight: InputItem;
+    ButtonSave: InputItem;
+    ButtonLoad: InputItem;
 }
 
 module InputUtils =
@@ -38,14 +40,17 @@ module InputUtils =
         Down = down;
     }
 
-    let getInputItem down prev = {
-        Press = down && (not prev.Down);
-        Down = down;
-    }
+    let getInputItem (keys: KeyboardState) key prev = 
+        let down = keys.IsKeyDown key
+        {
+            Press = down && (not prev.Down);
+            Down = down;
+        }
 
     let getInput (prevInput: Option<InputState>) =
         let mouse = Mouse.GetState ()
         let keys = Keyboard.GetState ()
+        let getInput = getInputItem keys
         match prevInput with
             | Some prevInput ->
                 // Calculate new input
@@ -55,7 +60,7 @@ module InputUtils =
 
                     MouseX = float32 mouse.X;
                     MouseY = float32 mouse.Y;
-                    MouseXDelta = (float32 mouse.X) - float32 prevInput.MouseX;
+                    MouseXDelta = (float32 mouse.X) - prevInput.MouseX;
                     MouseYDelta = (float32 mouse.Y) - prevInput.MouseY;
                     MouseMoved = prevInput.MouseX <> (float32 mouse.X) || prevInput.MouseY <> (float32 mouse.Y);
                     PrimaryMouse = {
@@ -70,10 +75,12 @@ module InputUtils =
                         Press = not prevInput.SecondaryMouse.Down && mouse.MiddleButton = ButtonState.Pressed;
                         Down = mouse.MiddleButton = ButtonState.Pressed;
                     }
-                    ButtonUp = (getInputItem (keys.IsKeyDown (Keys.Up)) prevInput.ButtonUp);
-                    ButtonDown = (getInputItem (keys.IsKeyDown (Keys.Down)) prevInput.ButtonDown);
-                    ButtonLeft = (getInputItem (keys.IsKeyDown (Keys.Left)) prevInput.ButtonLeft);
-                    ButtonRight = (getInputItem (keys.IsKeyDown (Keys.Right)) prevInput.ButtonRight);
+                    ButtonUp = (getInput Keys.Up prevInput.ButtonUp);
+                    ButtonDown = (getInput Keys.Down prevInput.ButtonDown);
+                    ButtonLeft = (getInput Keys.Left prevInput.ButtonLeft);
+                    ButtonRight = (getInput Keys.Right prevInput.ButtonRight);
+                    ButtonSave = (getInput Keys.I prevInput.ButtonSave);
+                    ButtonLoad = (getInput Keys.L prevInput.ButtonLoad);
 
                 }
             | None ->
@@ -94,4 +101,6 @@ module InputUtils =
                     ButtonDown = getInitialInputItem (keys.IsKeyDown (Keys.Down));
                     ButtonLeft = getInitialInputItem (keys.IsKeyDown (Keys.Left));
                     ButtonRight = getInitialInputItem (keys.IsKeyDown (Keys.Right));
+                    ButtonSave = getInitialInputItem (keys.IsKeyDown (Keys.I));
+                    ButtonLoad = getInitialInputItem (keys.IsKeyDown (Keys.L));
                 }

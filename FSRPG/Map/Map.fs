@@ -7,11 +7,12 @@ module MapHelpers =
     open FSharp.Data
     open System.IO
     open Microsoft.Xna.Framework.Graphics
+    open Microsoft.Xna.Framework
 
     // This module does map related shit idk man
 
-    type TilesetJSONType = FSharp.Data.JsonProvider<JSONDefs.tileset>
-    type TilemapJSONType = FSharp.Data.JsonProvider<JSONDefs.tilemap>
+    type TilesetJSONType = JsonProvider<JSONDefs.tileset>
+    type TilemapJSONType = JsonProvider<JSONDefs.tilemap>
 
     type TileAnimationFrame = {
         SpriteIndex: int;
@@ -56,6 +57,7 @@ module MapHelpers =
     // Each tile contains its own layers
     type Tile = {
         Layers: List<TileSprite>; // Coords of the sprite in the texture
+        Terrain: TileTerrainType;
         // Actual location of the tile
         X: int;
         Y: int;
@@ -67,13 +69,18 @@ module MapHelpers =
             Base: Tilemap;
             Tileset: Tileset;
             Tiles: List<Tile>;
-            Texture: Texture2D;
         }
         member this.Height with get () = this.Base.Height
         member this.Width with get () = this.Base.Width
         member this.PixelHeight with get () = this.Height * this.Tileset.TileHeight
         member this.PixelWidth with get () = this.Width * this.Tileset.TileWidth
         member this.TilesetName with get () = this.Base.Tileset
+        member this.TilePointToTileIndex (point: Point) =
+            point.Y * this.Width + point.X
+        member this.TileIndexToTilePoint (idx: int) =
+            let x = idx % this.Width
+            let y = idx / this.Width
+            new Point (x, y)
 
     let parseAnimation (animation: TilesetJSONType.Animation[]) =
         let parseFrame (frame: TilesetJSONType.Animation) = {
@@ -97,7 +104,12 @@ module MapHelpers =
             |> Seq.map (fun tile ->
                 {
                     ID = tile.Id;
-                    Terrain = TileTerrainType.TerrainPlains;
+                    Terrain =
+                        tile.Properties
+                        |> Array.tryFind (fun prop -> prop.Name = "terrain")
+                        |> function
+                        | Some ttype -> ttype.Value |> TileTerrainType.getTerrainType
+                        | None -> TileTerrainType.TerrainEmpty
                     SpriteIndex = tile.Id;
                     Animation = parseAnimation tile.Animation
                 }

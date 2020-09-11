@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Map\JSONDefs.fs" />
+    <Compile Include="Map\MovementType.fs" />
     <Compile Include="Map\TileTerrainType.fs" />
     <Compile Include="Map\Map.fs" />
     <Compile Include="Config.fs" />
@@ -81,6 +82,8 @@
     <Compile Include="InputEvent.fs" />
     <Compile Include="Camera.fs" />
     <Compile Include="UIState.fs" />
+    <Compile Include="Persist.fs" />
+    <Compile Include="PathFinding.fs" />
     <Compile Include="Main\GameState.fs" />
     <Compile Include="Main\Draw.fs" />
     <Compile Include="Main\Update.fs" />

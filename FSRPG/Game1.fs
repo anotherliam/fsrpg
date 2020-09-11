@@ -105,12 +105,21 @@ module GameRunner =
                 // UI
                 do match controlState.HighlightedTile with
                     | Some tile -> 
+                        // Draw hovered unit window
                         match Game.WorldUtils.getActorOnTile worldState.Actors tile with
                         | Some highlightedUnit ->
                             do NineSlice.drawWindow spriteBatch (Resources.loaded.PrimaryWindowSkin) (new Rectangle (8, 24, 220, 120))
                             do drawUITitle highlightedUnit.Name 16.0f 32.0f
                             ()
                         | None -> ()
+                        // Draw terrain window
+                        match Game.WorldUtils.getTerrainForTile worldState.TileMap tile with
+                        | terrain when terrain.InternalName = TileTerrainType.TerrainEmpty.InternalName -> ()
+                        | terrain -> 
+                            let top = Config.internalHeight - 100
+                            do NineSlice.drawWindow spriteBatch (Resources.loaded.PrimaryWindowSkin) (new Rectangle (8, top, 180, 80))
+                            do drawUITitle terrain.Name 16.0f (float32 top + 8.0f)
+                            do drawUITitle (sprintf "%A" tile) 16.0f (float32 top + 24.0f)
                     | _ -> ()
                 spriteBatch.End ()
 

@@ -100,7 +100,7 @@ module Resources =
 
     let prepareActiveTilemap resources tilemapName: MapHelpers.ActiveTilemap =
         let tmap = resources.TileMaps.Item tilemapName
-        let tset, texture = resources.TileSets.Item tmap.Tileset
+        let tset, _ = resources.TileSets.Item tmap.Tileset
         let getRegionRectForSpriteID id =
             let x = id % tset.Columns
             let y = id / tset.Columns
@@ -110,30 +110,38 @@ module Resources =
             )
         let tiles =
             seq<MapHelpers.Tile> {
-                for x in 0 .. tmap.Width - 1 do
-                    for y in 0 .. tmap.Height - 1 ->
+                for y in 0 .. tmap.Height - 1 do
+                    for x in 0 .. tmap.Width - 1 ->
                         let idx = y * tmap.Width + x
-                        let layers =
+                        let layerTileTypes =
                             tmap.Tiles
                             |> List.map (fun item -> item.[idx])
                             |> List.filter (fun item -> item <> 0)
                             |> List.map (fun item -> item - 1)
-                            |> List.map (fun item ->
-                                tset.Tiles |> List.tryFind (fun tile -> tile.ID = item)
-                                |> function
-                                    | Some tileType when (tileType.Animation.IsSome) ->
-                                        // Animated tile
-                                        tileType.Animation.Value
-                                        |> List.map (fun animFrame -> getRegionRectForSpriteID animFrame.SpriteIndex)
-                                        |> Animated
-                                    | _ ->
-                                        // Just a static tile
-                                        Static (getRegionRectForSpriteID item)
+                            |> List.map (fun item -> (tset.Tiles |> List.tryFind (fun tile -> tile.ID = item), item))
+                        let layers =
+                            layerTileTypes
+                            |> List.map (fun tile ->
+                                match tile with
+                                | Some tileType, _ when (tileType.Animation.IsSome) ->
+                                    // Animated tile
+                                    tileType.Animation.Value
+                                    |> List.map (fun animFrame -> getRegionRectForSpriteID animFrame.SpriteIndex)
+                                    |> Animated
+                                | _, tile ->
+                                    // Just a static tile
+                                    Static (getRegionRectForSpriteID tile)
                             )
+                        let rec getTerrain (layers: (TileType Option * int) List) (terrain: TileTerrainType) =
+                            match layers with
+                            | (Some tileType, _)::tail -> getTerrain tail tileType.Terrain
+                            | (None, _)::tail -> getTerrain tail terrain
+                            | _ -> terrain
                         {
                             Layers = layers;
                             X = x;
                             Y = y;
+                            Terrain = getTerrain layerTileTypes TileTerrainType.TerrainEmpty
                         }
             }
             |> Seq.toList
@@ -151,7 +159,6 @@ module Resources =
             Base = tmap;
             Tileset = tset;
             Tiles = tiles;
-            Texture = texture;
         }
 
     let unload (content: ContentManager) =

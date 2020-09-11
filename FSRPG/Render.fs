@@ -12,6 +12,7 @@ module DrawUtils =
             anim.[int (floor (t / 0.5))]
         let w = tmap.Tileset.TileWidth
         let h = tmap.Tileset.TileHeight
+        let _, texture = Resources.loaded.TileSets.Item tmap.TilesetName
         let rec drawTile: (List<FSRPG.MapHelpers.Tile> -> unit) = function
             | tile::tail ->
                 let destX = float (tile.X * w)
@@ -23,10 +24,10 @@ module DrawUtils =
                     | FSRPG.MapHelpers.Animated anim ->
                         let (x, y) = getFrame anim
                         let src = new System.Nullable<Rectangle>(new Rectangle(x, y, w, h))
-                        do spriteBatch.Draw (tmap.Texture, dest, src, Color.White)
+                        do spriteBatch.Draw (texture, dest, src, Color.White)
                     | FSRPG.MapHelpers.Static (x, y) ->
                         let src = new System.Nullable<Rectangle>(new Rectangle(x, y, w, h))
-                        do spriteBatch.Draw (tmap.Texture, dest, src, Color.White)
+                        do spriteBatch.Draw (texture, dest, src, Color.White)
                 )
                 drawTile tail
             | [] -> ()

@@ -77,6 +77,12 @@ module Update =
                     | State.Empty -> (worldStateManager, newControlState)
                     | State.Standby ->
                         match inputEvent with
+                        | _ when input.ButtonSave.Press ->
+                            Persist.battleSave worldState
+                            ( worldStateManager, newControlState )
+                        | _ when input.ButtonLoad.Press ->
+                            let loadedWorldState = Persist.battleLoad ()
+                            ( worldStateManager.RestoreFrom loadedWorldState, newControlState )
                         // We clicked
                         | InputEvent.MapTile tile when input.PrimaryMouse.Press ->
                             let ucs = updateHighlightedTile newControlState tile

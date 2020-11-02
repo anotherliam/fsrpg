@@ -9,6 +9,7 @@ module GameRunner =
     open MapHelpers
     open System
     open FSRPG.GUIRendering
+    open FSRPG.GUIRendering.Windows
 
 
     type TransitionType<'t> =
@@ -31,9 +32,6 @@ module GameRunner =
 
         // For fps
         let mutable prevElapsedSeconds = 0.0
-
-        let textColor = Color.DarkSlateBlue
-
         
 
         let printFPS elapsed prevElapsed =
@@ -43,11 +41,6 @@ module GameRunner =
                 |> string
             spriteBatch.DrawString (Resources.loaded.Fonts.Main_md, value, (Vector2(8.0f, 4.0f)), Color.DarkRed)
         
-        let drawUIString font (str: string) x y =
-            spriteBatch.DrawString (font, str, (Vector2(x, y)), Color.White)
-
-        let drawUIText str x y = drawUIString Resources.loaded.Fonts.Main_md str x y
-        let drawUITitle str x y = drawUIString Resources.loaded.Fonts.Main_sm str x y
         
         override this.Initialize () =
             // Set screen size
@@ -101,25 +94,20 @@ module GameRunner =
                 // Draw in screen space
                 spriteBatch.Begin ()
                 // frame rate
-                do printFPS delta prevElapsedSeconds
+                // do printFPS delta prevElapsedSeconds
                 // UI
                 do match controlState.HighlightedTile with
                     | Some tile -> 
                         // Draw hovered unit window
                         match Game.WorldUtils.getActorOnTile worldState.Actors tile with
                         | Some highlightedUnit ->
-                            do NineSlice.drawWindow spriteBatch (Resources.loaded.PrimaryWindowSkin) (new Rectangle (8, 24, 220, 120))
-                            do drawUITitle highlightedUnit.Name 16.0f 32.0f
+                            do HoveredUnitWindow.draw spriteBatch highlightedUnit inputState.MousePosition
                             ()
                         | None -> ()
                         // Draw terrain window
                         match Game.WorldUtils.getTerrainForTile worldState.TileMap tile with
                         | terrain when terrain.InternalName = TileTerrainType.TerrainEmpty.InternalName -> ()
-                        | terrain -> 
-                            let top = Config.internalHeight - 100
-                            do NineSlice.drawWindow spriteBatch (Resources.loaded.PrimaryWindowSkin) (new Rectangle (8, top, 180, 80))
-                            do drawUITitle terrain.Name 16.0f (float32 top + 8.0f)
-                            do drawUITitle (sprintf "%A" tile) 16.0f (float32 top + 24.0f)
+                        | terrain -> do TerrainWindow.draw spriteBatch terrain tile inputState.MousePosition
                     | _ -> ()
                 spriteBatch.End ()
 

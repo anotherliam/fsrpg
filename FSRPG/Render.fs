@@ -19,15 +19,14 @@ module DrawUtils =
                 let destY = float (tile.Y * h)
                 let dest = new Vector2 ((floor destX) |> float32, (floor destY) |> float32)
                 tile.Layers
-                |> List.iter (
-                    function
+                |> List.iter ( fun tile ->
+                    match tile with
                     | FSRPG.MapHelpers.Animated anim ->
                         let (x, y) = getFrame anim
-                        let src = new System.Nullable<Rectangle>(new Rectangle(x, y, w, h))
-                        do spriteBatch.Draw (texture, dest, src, Color.White)
+                        System.Nullable<Rectangle>(new Rectangle(x, y, w, h))
                     | FSRPG.MapHelpers.Static (x, y) ->
-                        let src = new System.Nullable<Rectangle>(new Rectangle(x, y, w, h))
-                        do spriteBatch.Draw (texture, dest, src, Color.White)
+                        System.Nullable<Rectangle>(new Rectangle(x, y, w, h))
+                    |> fun src -> do spriteBatch.Draw (texture, dest, src, Color.White)   
                 )
                 drawTile tail
             | [] -> ()

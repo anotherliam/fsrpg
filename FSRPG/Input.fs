@@ -1,6 +1,7 @@
 ﻿namespace FSRPG.Input
 
 open Microsoft.Xna.Framework.Input
+open Microsoft.Xna.Framework
 
 type InputItem = {
     // Triggers only in the frame where the button was pressed down
@@ -9,29 +10,31 @@ type InputItem = {
     Down: bool;
 }
 
-type InputState = {
-    Mouse: MouseState;
-    Keys: KeyboardState;
-    // Actually useful
+type InputState =
+    {
+        Mouse: MouseState;
+        Keys: KeyboardState;
+        // Actually useful
 
-    // Mouse shit
-    MouseMoved: bool;
-    PrimaryMouse: InputItem;
-    SecondaryMouse: InputItem;
-    TertiaryMouse: InputItem;
-    MouseX: float32;
-    MouseY: float32;
-    MouseXDelta: float32;
-    MouseYDelta: float32;
+        // Mouse shit
+        MouseMoved: bool;
+        PrimaryMouse: InputItem;
+        SecondaryMouse: InputItem;
+        TertiaryMouse: InputItem;
+        MouseX: float32;
+        MouseY: float32;
+        MouseXDelta: float32;
+        MouseYDelta: float32;
 
-    // Keyboard shit
-    ButtonUp: InputItem;
-    ButtonDown: InputItem;
-    ButtonLeft: InputItem;
-    ButtonRight: InputItem;
-    ButtonSave: InputItem;
-    ButtonLoad: InputItem;
-}
+        // Keyboard shit
+        ButtonUp: InputItem;
+        ButtonDown: InputItem;
+        ButtonLeft: InputItem;
+        ButtonRight: InputItem;
+        ButtonSave: InputItem;
+        ButtonLoad: InputItem;
+    }
+    member this.MousePosition with get () = new Vector2 (this.MouseX, this.MouseY)
 
 module InputUtils =
     

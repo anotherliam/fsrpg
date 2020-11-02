@@ -31,14 +31,8 @@ let reduce (gameState: State.WorldState) (action: Actions.GameAction) =
         }
 
     | MoveActorTo (actor, loc) ->
-        let update (a: Game.Actor) =
-            {
-                a with
-                    GridPosition = loc;
-
-            }
         {
             gameState with
                 Type = State.Standby;
-                Actors = updateListItem gameState.Actors actor update;
+                Actors = updateListItem gameState.Actors actor (fun a -> { a with GridPosition = loc; });
         }

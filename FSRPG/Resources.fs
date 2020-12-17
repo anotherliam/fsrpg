@@ -11,6 +11,12 @@ module Resources =
     open MonoGame.Extended.TextureAtlases
     open MonoGame.Extended
 
+    let createFrames width height frames =
+        seq {
+            for frame in 0..(frames - 1) -> Rectangle (0, height * frame, width, height)
+        }
+        |> List.ofSeq
+
     let Thiccness = Thickness
 
     type TilesetTexture = Texture2D
@@ -28,6 +34,7 @@ module Resources =
         {
             Grid: Sprite;
             SelCursor: Sprite;
+            OverlaySel: Sprite;
             ActorSwordsman: Sprite;
         }
 
@@ -38,13 +45,17 @@ module Resources =
             TileSets: Map<string, (MapHelpers.Tileset * TilesetTexture)>;
             TileMaps: Map<string, MapHelpers.Tilemap>;
             PrimaryWindowSkin: NinePatchRegion2D;
+            BlankTexture: Texture2D;
         }
 
     
     let mutable loaded: Resources = Unchecked.defaultof<Resources>;
         
 
-    let load (content: ContentManager) =
+    let load (content: ContentManager) (graphicsDevice: GraphicsDevice) =
+
+        let blankTexture = new Texture2D(graphicsDevice, 1, 1);
+        blankTexture.SetData ([| Color.White |])
         
         let tilesets =
             TILESETS
@@ -83,6 +94,10 @@ module Resources =
                         (content.Load<Texture2D> "sprites/Grid")
                         [new Rectangle (0,0,0,0)]
                         0.5;
+                    OverlaySel = Sprite.create
+                        (content.Load<Texture2D> "sprites/OverlaySel")
+                        (createFrames 16 16 3)
+                        0.25;
                     SelCursor = Sprite.create
                         (content.Load<Texture2D> "sprites/SelectionCursor")
                         [new Rectangle (0,0,0,0)]
@@ -96,6 +111,8 @@ module Resources =
             TileMaps = tilemaps;
 
             PrimaryWindowSkin = new NinePatchRegion2D (windowSkinTexture, Thiccness 6)
+
+            BlankTexture = blankTexture;
         }
 
     let prepareActiveTilemap resources tilemapName: MapHelpers.ActiveTilemap =

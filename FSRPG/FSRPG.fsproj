@@ -59,9 +59,6 @@
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="GameEngine\SpriteSource.fs" />
-    <Compile Include="GameEngine\Renderable.fs" />
-    <Compile Include="GameEngine\Node.fs" />
     <Compile Include="Map\JSONDefs.fs" />
     <Compile Include="Map\MovementType.fs" />
     <Compile Include="Map\TileTerrainType.fs" />
@@ -72,6 +69,7 @@
     <Compile Include="ActorSprite.fs" />
     <Compile Include="Resources.fs" />
     <Compile Include="EngineState.fs" />
+    <Compile Include="PathFinding.fs" />
     <Compile Include="GameLogic\Weapon.fs" />
     <Compile Include="GameLogic\Actor.fs" />
     <Compile Include="GameLogic\WorldUtils.fs" />
@@ -91,7 +89,6 @@
     <Compile Include="Camera.fs" />
     <Compile Include="UIState.fs" />
     <Compile Include="Persist.fs" />
-    <Compile Include="PathFinding.fs" />
     <Compile Include="Main\GameState.fs" />
     <Compile Include="Main\Draw.fs" />
     <Compile Include="Main\Update.fs" />

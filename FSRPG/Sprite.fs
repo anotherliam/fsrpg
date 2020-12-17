@@ -45,4 +45,15 @@ module Sprite =
         sb.Draw (sprite.Texture, pos, frame, color)
 
     let draw sb time sprite pos = drawColored sb time sprite pos Color.White
- 
+    
+    let dataset = [2;5;2]
+
+    let sum dataset =
+        dataset
+        |> List.fold (fun acc item -> acc + item) 0
+
+
+    let rec fold<'T, 'Acc> folder (acc: 'Acc) (list: 'T list) =
+        match list with
+        | [] -> acc
+        | head::tail -> fold folder (folder acc head) tail

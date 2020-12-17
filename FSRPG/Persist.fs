@@ -7,6 +7,7 @@ module Persist =
 
     let setupSaveFolder () =
         Directory.CreateDirectory Config.SaveFolder
+        |> ignore
 
     // Converts the worldState object into a json string
     let persistToJson (worldState: State.WorldState) =
@@ -19,7 +20,7 @@ module Persist =
         JsonConvert.DeserializeObject<State.WorldState> json
 
     let loadGameFromFile fileName =
-        do setupSaveFolder () |> ignore
+        do setupSaveFolder ()
         match File.Exists fileName with
         | true ->
             File.ReadAllText fileName

@@ -4,10 +4,15 @@ open FSRPG
 
 // A team is just an int8, with the actual player being 0
 
+type PathfindingInfo =
+    {
+        PossibleTiles: int list
+    }
+
 type WorldStateType =
     | Empty
     | Standby
-    | SelectedActor of Game.Actor
+    | SelectedActor of Game.Actor * PathfindingInfo
 
 type WorldState =
     {

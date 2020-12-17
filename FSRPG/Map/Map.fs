@@ -81,6 +81,8 @@ module MapHelpers =
             let x = idx % this.Width
             let y = idx / this.Width
             new Point (x, y)
+        member this.GetIndexOfTile (tile: Tile) = tile.Y * this.Width + tile.X
+
 
     let parseAnimation (animation: TilesetJSONType.Animation[]) =
         let parseFrame (frame: TilesetJSONType.Animation) = {

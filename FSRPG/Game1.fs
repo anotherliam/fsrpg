@@ -54,7 +54,7 @@ module GameRunner =
             ()
 
         override this.LoadContent() =
-            Resources.load this.Content
+            Resources.load this.Content this.GraphicsDevice
             ()
  
         override this.Update (gameTime) =
@@ -76,15 +76,26 @@ module GameRunner =
                 spriteBatch.Begin (SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, Nullable controlState.Camera.ViewMatrix)
                 // Draw map
                 do FSRPG.Render.DrawUtils.drawMap spriteBatch worldState.TileMap time
+                // Draw pathfinding
+                do match worldState.Type with
+                    | State.SelectedActor (actor, pathfinding) ->
+                        pathfinding.PossibleTiles
+                        |> List.iter (fun tileIdx -> // Draw highlights on squares that are moveable
+                            let pos = worldState.TileMap.TileIndexToTilePoint tileIdx
+                            do Sprite.drawColored spriteBatch time Resources.loaded.Sprites.OverlaySel (Rectangle (pos.X * Config.GridSize, pos.Y * Config.GridSize, Config.GridSize, Config.GridSize)) (Color (Color.White, 0.75f))
+                            // do Render.DrawUtils.drawRec spriteBatch (Rectangle (pos.X * Config.GridSize + 1, pos.Y * Config.GridSize + 1, Config.GridSize - 2, Config.GridSize - 2)) Config.MovementPossibiltyHLCol
+                        )
+                    | _ -> ()
                 // Draw units
                 do worldState.Actors
                 |> List.iter (fun actor ->
                     let isSelected =
                         match worldState.Type with
-                        | State.SelectedActor selected when selected = actor -> true
+                        | State.SelectedActor (selected, _) when selected = actor -> true
                         | _ -> false
                     do FSRPG.Render.DrawUtils.drawMapActor spriteBatch actor isSelected time
                 )
+                
                 // Draw selector
                 if (controlState.HighlightedTile.IsSome)
                     then do FSRPG.Render.DrawUtils.drawHighlightedTile spriteBatch controlState.HighlightedTile.Value time
@@ -94,7 +105,7 @@ module GameRunner =
                 // Draw in screen space
                 spriteBatch.Begin ()
                 // frame rate
-                // do printFPS delta prevElapsedSeconds
+                do printFPS delta prevElapsedSeconds
                 // UI
                 do match controlState.HighlightedTile with
                     | Some tile -> 
@@ -107,7 +118,7 @@ module GameRunner =
                         // Draw terrain window
                         match Game.WorldUtils.getTerrainForTile worldState.TileMap tile with
                         | terrain when terrain.InternalName = TileTerrainType.TerrainEmpty.InternalName -> ()
-                        | terrain -> do TerrainWindow.draw spriteBatch terrain tile inputState.MousePosition
+                        | terrain -> do TerrainWindow.draw spriteBatch terrain tile (worldState.TileMap.TilePointToTileIndex tile) inputState.MousePosition
                     | _ -> ()
                 spriteBatch.End ()
 

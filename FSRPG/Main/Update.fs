@@ -35,7 +35,7 @@ module Update =
                 HighlightedTile = Some pos
         }
 
-    let maybeSelectActor (actor: Game.Actor) (player: int8) = if actor.Team = player then Actions.SelectActor (actor) else Actions.NoOp
+    let maybeSelectActor (actor: Game.Actor) (playerTeam: int8) = if (actor.Team = playerTeam) && (not actor.Tapped) then Actions.SelectActor (actor) else Actions.NoOp
 
     let tick (graphics: GraphicsDeviceManager) (gameTime: GameTime) (gameState: GameState) =
             let delta = float32 gameTime.ElapsedGameTime.TotalSeconds
@@ -104,7 +104,7 @@ module Update =
                         | InputEvent.MapTile tile when input.MouseMoved ->
                             ( worldStateManager, (updateHighlightedTile newControlState tile) )
                         | _ -> ( worldStateManager, newControlState )
-                    | State.SelectedActor selectedActor ->
+                    | State.SelectedActor (selectedActor, pathfinding) ->
                         match inputEvent with
                         // Left clicked
                         | InputEvent.MapTile tile when input.PrimaryMouse.Press ->
@@ -112,8 +112,11 @@ module Update =
                             match Game.WorldUtils.getActorOnTile worldState.Actors tile with
                             // Clicked on an actor, select it if possible
                             | Some actor -> ( (worldStateManager.next (maybeSelectActor actor worldState.PlayersTurn)), ucs )
-                            // Clicked on an empty square, move there (TODO: Check if its a valid move lol)
-                            | None -> ( (worldStateManager.next (Actions.MoveActorTo (selectedActor, tile))), ucs )
+                            // Clicked on an empty square, check if its a valid move
+                            | None ->
+                                if List.contains (worldState.TileMap.TilePointToTileIndex tile) pathfinding.PossibleTiles
+                                    then ( (worldStateManager.next (Actions.MoveActorTo (selectedActor, tile))), ucs )
+                                    else (worldStateManager, newControlState)
                         // Right click, just unselect the actor
                         | InputEvent.MapTile tile when input.SecondaryMouse.Press ->
                             (

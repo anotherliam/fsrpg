@@ -44,9 +44,18 @@ module DrawUtils =
                 else Nullable (new Rectangle (0, 32, 32, 32))
         do spriteBatch.Draw (Resources.loaded.Sprites.SelCursor.Texture, dest, src, Color.White)
         ()
+        
+    let drawRec (sb: SpriteBatch) (pos: Rectangle) col =
+        do sb.Draw (Resources.loaded.BlankTexture, pos, col)
+        ()
 
-    let getActorCol team selected time =
-        let baseCol = if team = 0y then Color.LightBlue else Color.DarkRed
+    let getActorCol team selected tapped time =
+        let baseCol = 
+            match team with
+            | 0y when not tapped -> Config.ActorColPlayer
+            | 0y -> Config.ActorColPlayerTapped
+            | _ when not tapped -> Config.ActorColEnemy
+            | _ -> Config.ActorColEnemyTapped
         let alpha =
             if selected then
                 if ((time % 1.0) <= 0.5) then 0.2f
@@ -58,6 +67,6 @@ module DrawUtils =
         let dest = new Rectangle((actor.GridPosition.X * Config.GridSize), (actor.GridPosition.Y * Config.GridSize), Config.GridSize, Config.GridSize)
         let spr = Resources.loaded.Sprites.ActorSwordsman
         let src = Sprite.getFrameRepeating time spr |> Nullable
-        let col = getActorCol actor.Team selected time
+        let col = getActorCol actor.Team selected actor.Tapped time
         do spriteBatch.Draw (spr.Texture, dest, src, col)
         ()

@@ -64,6 +64,7 @@ type Actor =
         CHP: int;
         Statistics: Statistics;
         Weapon: Weapon Option
+        Tapped: Boolean;
     }
     static member blank () =
         {
@@ -80,14 +81,29 @@ type Actor =
                 WeaponPrototypeID "longsword"
                 |> Weapon.createInstance
                 |> Some
+            Tapped = false;
         }
     member this.calcDerivedStatistics () =
-        {
-            Pow = this.Statistics.Atk;
-            PProt = this.Statistics.Def;
-            MProt = this.Statistics.Res;
-            Hit = this.Statistics.Dex * 2;
-            Dodge = this.Statistics.Agi + this.Statistics.Luk;
-            Crit = this.Statistics.Dex;
-            CritDodge = this.Statistics.Luk;
-        }
+        match this.Weapon with
+        | Some weapon ->
+            let weaponStats = weapon.Prototype ()
+            {
+                Pow = this.Statistics.Atk + weaponStats.Pow;
+                PProt = this.Statistics.Def;
+                MProt = this.Statistics.Res;
+                Hit = (this.Statistics.Dex * 2) + weaponStats.Acc;
+                Dodge = this.Statistics.Agi + this.Statistics.Luk;
+                Crit = this.Statistics.Dex;
+                CritDodge = this.Statistics.Luk;
+            }
+        | None ->
+            {
+                Pow = 0;
+                PProt = this.Statistics.Def;
+                MProt = this.Statistics.Res;
+                Hit = 0;
+                Dodge = this.Statistics.Agi + this.Statistics.Luk;
+                Crit = 0;
+                CritDodge = this.Statistics.Luk;
+            }
+    

@@ -17,7 +17,7 @@ module TileTerrainType =
 
     // Move cost sets
     let basicMovementCosts _ = 1.0f
-    let impassableMovementCost _ = -1.0f
+    let impassableMovementCost _ = 999.0f
     let forestMovementCost: MovementCost = function
         | Foot -> 2.0f
         | Flying -> 1.0f

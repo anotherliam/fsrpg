@@ -2,6 +2,9 @@
 
 open System
 
+type WeaponTrait =
+    | Crit of int
+
 type WeaponPrototypeID = WeaponPrototypeID of string
 
 type WeaponPrototype =
@@ -12,6 +15,7 @@ type WeaponPrototype =
         Acc: int;
         Dur: int;
         Cost: int;
+        Traits: WeaponTrait List
     }
     member this.TotalCost () = this.Cost * this.Dur;
 
@@ -24,12 +28,25 @@ module Weapons =
                 {
                     ID = WeaponPrototypeID "longsword";
                     DisplayName = "Longsword";
-                    Pow = 6;
-                    Acc = 90;
-                    Dur = 25;
-                    Cost = 30;
+                    Pow = 9;
+                    Acc = 85;
+                    Dur = 30;
+                    Cost = 30; // 900
+                    Traits = [];
                 };
-            )
+            );
+            (
+                WeaponPrototypeID "katana",
+                {
+                    ID = WeaponPrototypeID "katana";
+                    DisplayName = "Katana";
+                    Pow = 10;
+                    Acc = 75;
+                    Dur = 20;
+                    Cost = 72; // 1440
+                    Traits = [Crit 30];
+                };
+            );
         ]
         |> Map.ofList
     let getWeaponById id =

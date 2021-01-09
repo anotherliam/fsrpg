@@ -78,6 +78,7 @@
     <Compile Include="GUIRendering\UIWindow.fs" />
     <Compile Include="GUIRendering\TerrainWindow.fs" />
     <Compile Include="GUIRendering\HoveredUnitWindow.fs" />
+    <Compile Include="GUIRendering\UIMenu.fs" />
     <Compile Include="WorldState\WorldState.fs" />
     <Compile Include="WorldState\WorldStateUtils.fs" />
     <Compile Include="Actions\GameAction.fs" />
